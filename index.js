@@ -12,6 +12,7 @@ class Sprite {
 		this.position = position
 		this.velocity = velocity
 		this.height = 150
+		this.lastKey
 	}
 
 	draw() {
@@ -60,12 +61,13 @@ const keys = {
 	d: {
 		pressed: false
 	},
-	w: {
+	ArrowRight: {
+		pressed: false
+	},
+	ArrowLeft: {
 		pressed: false
 	}
 }
-
-let lastKey 
 
 function animate() {
 	window.requestAnimationFrame(animate) //Infinite loop
@@ -75,28 +77,50 @@ function animate() {
 	enemy.update()
 
 	player.velocity.x = 0
+	enemy.velocity.x = 0
 
-	if(keys.a.pressed && lastKey === 'a') {
+	//player movement
+	if(keys.a.pressed && player.lastKey === 'a') {
 		player.velocity.x = -1
 	}
-	else if(keys.d.pressed && lastKey === 'd') {
+	else if(keys.d.pressed && player.lastKey === 'd') {
 		player.velocity.x = 1
+	}
+
+	//enemy movement
+	if(keys.ArrowLeft.pressed && enemy.lastKey === 'ArrowLeft') {
+		enemy.velocity.x = -1
+	}
+	else if(keys.ArrowRight.pressed && enemy.lastKey === 'ArrowRight') {
+		enemy.velocity.x = 1
 	}
 }
 
 animate()
 
 window.addEventListener('keydown', (e) => {
-	lastKey = e.key
 	switch (e.key) {
 		case 'd':
 			keys.d.pressed = true
+			player.lastKey = e.key
 			break
 		case 'a':
 			keys.a.pressed = true
+			player.lastKey = e.key
 			break
 		case 'w':
-			keys.w.pressed = true
+			player.velocity.y = -10
+			break
+		case 'ArrowRight':
+			keys.ArrowRight.pressed = true
+			enemy.lastKey = e.key
+			break
+		case 'ArrowLeft':
+			keys.ArrowLeft.pressed = true
+			enemy.lastKey = e.key
+			break
+		case 'ArrowUp':
+			enemy.velocity.y = -10
 			break
 
 	}
@@ -110,9 +134,16 @@ window.addEventListener('keyup', (e) => {
 		case 'a':
 			keys.a.pressed = false
 			break
-		case 'w':
-			keys.w.pressed = false
+	}
+
+	switch (e.key) {
+		case 'ArrowLeft':
+			keys.ArrowLeft.pressed = false
 			break
+		case 'ArrowRight':
+			keys.ArrowRight.pressed = false
+			break
+	
 	}
 })
 
